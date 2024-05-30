@@ -4,7 +4,6 @@ namespace Binaryk\LaravelRestify\Tests\Fixtures\Post;
 
 class PostPolicy
 {
-    //contract ->caching controlat TBD: Novaexampel :Cache
     public function allowRestify($user = null)
     {
         return $_SERVER['restify.post.allowRestify'] ?? true;
