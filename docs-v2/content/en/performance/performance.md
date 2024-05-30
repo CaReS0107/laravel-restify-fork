@@ -21,6 +21,20 @@ In order to improve performance, Restify caches the policies. You simply have to
 ],
 ```
 
+Restify allows individual caching at the policy level with specific configurations. To enable this, the policy level must define the method `allowCaching`, which should return a `bool`.
+
+Additionally, there are global configurations in `restify.php`:
+
+```php
+'cache' => [
+    'policy' => [
+        'allow_random_ttl' => true, //360 * random_int(1, 9);
+        'default_ttl' =>  5 * 60,//default seconds
+    ],
+]
+```
+If the global configuration `restify.cache.policies.enabled` is set to `false`, individual policy caching will be disregarded. The primary point of control is the `allowCaching` method.
+
 The caching is tight to the current authenticated user so if another user is logged in, the cache will be hydrated for the new user once again.
 
 ## Disable index meta

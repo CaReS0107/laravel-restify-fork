@@ -2,15 +2,20 @@
 
 namespace Binaryk\LaravelRestify\Tests\Feature;
 
+use Binaryk\LaravelRestify\Cache\Cacheable;
+use Binaryk\LaravelRestify\Cache\PolicyCache;
 use Binaryk\LaravelRestify\Tests\Database\Factories\PostFactory;
 use Binaryk\LaravelRestify\Tests\Fixtures\Post\Post;
 use Binaryk\LaravelRestify\Tests\Fixtures\Post\PostPolicy;
 use Binaryk\LaravelRestify\Tests\Fixtures\Post\PostRepository;
 use Binaryk\LaravelRestify\Tests\Fixtures\User\User;
 use Binaryk\LaravelRestify\Tests\IntegrationTestCase;
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\ErrorHandler\ErrorHandler;
 
 class AuthorizableModelsTest extends IntegrationTestCase
 {
@@ -119,5 +124,46 @@ class AuthorizableModelsTest extends IntegrationTestCase
 
         $this->getJson(PostRepository::route())
             ->assertForbidden();
+    }
+
+    public function test_can_enable_individual_policy_cache(): void
+    {
+        $this->freezeTime();
+
+        $this->partialMock(PostPolicy::class)
+            ->shouldReceive('show')
+            ->once()
+            ->andReturn(true);
+
+        $this->partialMock(PostPolicy::class)
+            ->shouldReceive('cache')
+            ->once()
+            ->andReturn(now()->addMinuts(3));
+
+        Gate::policy(Post::class, PostPolicy::class);
+
+        /** @var Carbon $timeCached */
+        $timeCached = Gate::getPolicyFor(Post::class)
+            ->cache();
+
+        $this->assertTrue($timeCached instanceof CarbonInterface);
+
+        $post = PostFactory::one();
+
+        $this->getJson(PostRepository::route())
+            ->assertOk();
+
+        $this->assertTrue(Cache::has(PolicyCache::keyForPolicyMethods('posts', 'show', $post->getKey())));
+
+        $this->partialMock(PostPolicy::class)
+            ->shouldReceive('show')
+            ->once()
+            ->andReturn(false);
+
+        $this->assertTrue(Cache::get(PolicyCache::keyForPolicyMethods('posts', 'show', $post->getKey())));
+
+        $this->travelTo(now()->addMinutes(5));
+
+        $this->assertFalse(Cache::has(PolicyCache::keyForPolicyMethods('posts', 'show', $post->getKey())));
     }
 }

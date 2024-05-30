@@ -36,7 +36,7 @@ trait AuthorizableModels
                 : false;
         };
 
-        return PolicyCache::resolve(PolicyCache::keyForAllowRestify(static::uriKey()), $resolver);
+        return PolicyCache::resolve(PolicyCache::keyForAllowRestify(static::uriKey()), $resolver, static::newModel());
     }
 
     /**
@@ -112,7 +112,7 @@ trait AuthorizableModels
 
         if ($authorized === false) {
             abort(403,
-                'You cannot attach model:'.get_class($model).', to the model:'.get_class($this->model()).', check your permissions.');
+                'You cannot attach model:' . get_class($model) . ', to the model:' . get_class($this->model()) . ', check your permissions.');
         }
 
         return false;
@@ -132,7 +132,7 @@ trait AuthorizableModels
 
         if ($authorized === false) {
             abort(403,
-                'You cannot sync key to the model:'.get_class($this->model()).', check your permissions.');
+                'You cannot sync key to the model:' . get_class($this->model()) . ', check your permissions.');
         }
 
         return false;
@@ -202,7 +202,8 @@ trait AuthorizableModels
 
         return PolicyCache::resolve(
             PolicyCache::keyForPolicyMethods(static::uriKey(), $ability, $this->resource->getKey()),
-            fn () => Gate::check($ability, $this->resource)
+            fn () => Gate::check($ability, $this->resource),
+            $this->model(),
         );
     }
 
