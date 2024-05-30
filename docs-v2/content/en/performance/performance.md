@@ -23,7 +23,7 @@ In order to improve performance, Restify caches the policies. You simply have to
 
 The caching is tight to the current authenticated user so if another user is logged in, the cache will be hydrated for the new user once again.
 
-Restify allows individual caching at the policy level with specific configurations. To enable this, a contract `Cacheable` must be implemneted at the policy level, which enforces the use of the `cache()` method.
+Restify allows individual caching at the policy level with specific configurations. To enable this, a contract `Cacheable` must be implemented at the policy level, which enforces the use of the `cache()` method.
 
 ``` php
 class PostPolicy implements Cacheable
