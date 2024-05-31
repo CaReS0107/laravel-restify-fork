@@ -26,6 +26,7 @@ class AuthorizableModelsTest extends IntegrationTestCase
         parent::setUp();
 
         config()->set('restify.cache.policies.enabled', true);
+        config()->set('cache.default', 'file');
 
         $_SERVER['restify.post.allowRestify'] = true;
 
@@ -132,7 +133,6 @@ class AuthorizableModelsTest extends IntegrationTestCase
 
         $this->partialMock(PostPolicy::class)
             ->shouldReceive('show')
-            ->once()
             ->andReturn(true);
 
         $this->partialMock(PostPolicy::class)
@@ -157,8 +157,10 @@ class AuthorizableModelsTest extends IntegrationTestCase
 
         $this->partialMock(PostPolicy::class)
             ->shouldReceive('show')
-            ->once()
             ->andReturn(false);
+
+        $this->getJson(PostRepository::route())
+            ->assertOk();
 
         $this->assertTrue(Cache::get(PolicyCache::keyForPolicyMethods('posts', 'show', $post->getKey())));
 
