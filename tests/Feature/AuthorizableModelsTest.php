@@ -138,7 +138,7 @@ class AuthorizableModelsTest extends IntegrationTestCase
         $this->partialMock(PostPolicy::class)
             ->shouldReceive('cache')
             ->once()
-            ->andReturn(now()->addMinuts(3));
+            ->andReturn(now()->addMinutes(3));
 
         Gate::policy(Post::class, PostPolicy::class);
 
