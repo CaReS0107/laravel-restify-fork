@@ -2,6 +2,8 @@
 
 namespace Binaryk\LaravelRestify\Repositories;
 
+use Binaryk\LaravelRestify\Restify;
+
 trait RepositoryEvents
 {
     /**

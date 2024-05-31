@@ -2,7 +2,6 @@
 
 namespace Binaryk\LaravelRestify\Tests\Feature;
 
-use Binaryk\LaravelRestify\Cache\Cacheable;
 use Binaryk\LaravelRestify\Cache\PolicyCache;
 use Binaryk\LaravelRestify\Tests\Database\Factories\PostFactory;
 use Binaryk\LaravelRestify\Tests\Fixtures\Post\Post;
@@ -15,7 +14,8 @@ use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
-use Symfony\Component\ErrorHandler\ErrorHandler;
+use Illuminate\Testing\Fluent\AssertableJson;
+use Illuminate\Testing\TestResponse;
 
 class AuthorizableModelsTest extends IntegrationTestCase
 {
@@ -138,7 +138,7 @@ class AuthorizableModelsTest extends IntegrationTestCase
         $this->partialMock(PostPolicy::class)
             ->shouldReceive('cache')
             ->once()
-            ->andReturn(now()->addMinuts(3));
+            ->andReturn(now()->addMinutes(3));
 
         Gate::policy(Post::class, PostPolicy::class);
 
@@ -165,5 +165,45 @@ class AuthorizableModelsTest extends IntegrationTestCase
         $this->travelTo(now()->addMinutes(5));
 
         $this->assertFalse(Cache::has(PolicyCache::keyForPolicyMethods('posts', 'show', $post->getKey())));
+    }
+
+    public function test_can_handle_create_cache_invalidation(): void
+    {
+        PostRepository::$flushRestifyCache = false;
+
+//        $this->partialMock(PostPolicy::class)
+//            ->shouldReceive('cache')
+//            ->once()
+//            ->andReturn(now()->addMinutes(3));
+
+//        Gate::policy(Post::class, PostPolicy::class);
+
+        $user = $this->mockUsers()->first();
+
+        $this->postJson(PostRepository::route(), [
+            'user_id' => $user->getKey(),
+            'title' => 'Some post title',
+            'description' => 'A very short description',
+        ])->assertCreated();
+
+        dd(111);
+        $post = $this
+            ->posts()
+            ->fake()
+            ->create()
+            ->model();
+        dd(1111);
+        $this->post(PostRepository::route(), [
+            'user_id' => User::factory()
+                ->create()
+                ->getKey(),
+            'title' => fake()->title,
+            'description' => fake()->sentences,
+        ])->assertCreated();
+
+        $post = Post::factory()
+            ->create();
+
+
     }
 }

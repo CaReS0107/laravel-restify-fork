@@ -25,6 +25,7 @@ use Binaryk\LaravelRestify\Services\Search\RepositorySearchService;
 use Binaryk\LaravelRestify\Traits\HasColumns;
 use Binaryk\LaravelRestify\Traits\InteractWithSearch;
 use Binaryk\LaravelRestify\Traits\PerformsQueries;
+use Binaryk\LaravelRestify\Traits\InvalidatePolicyCacheable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\ConditionallyLoadsAttributes;
@@ -58,6 +59,7 @@ class Repository implements JsonSerializable, RestifySearchable
     use Testing;
     use ValidatingTrait;
     use WithRoutePrefix;
+    use InvalidatePolicyCacheable;
 
     /**
      * This is named `resource` because of the forwarding properties from DelegatesToResource trait.
@@ -159,6 +161,12 @@ class Repository implements JsonSerializable, RestifySearchable
     {
         $this->bootIfNotBooted();
     }
+
+    /**
+     * Should flush cache when Policy Event are triggered.
+     * @var bool
+     */
+    public static bool $flushRestifyCache = false;
 
     /**
      * Get the URI key for the repository.

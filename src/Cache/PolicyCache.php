@@ -2,6 +2,7 @@
 
 namespace Binaryk\LaravelRestify\Cache;
 
+use Binaryk\LaravelRestify\Repositories\Repository;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
