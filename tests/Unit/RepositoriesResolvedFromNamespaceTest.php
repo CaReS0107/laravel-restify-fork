@@ -48,7 +48,7 @@ class RepositoriesResolvedFromNamespaceTest extends IntegrationTestCase
     }
 
     #[DataProvider('repositoryPathsFromFixtures')]
-    public function test_repository_can_be_resolved_from_any_namespace(string $directory, string $namespace): void
+    public function test_repository_can_be_resolved_from_any_namespace(string $directory, string $namespace, string $serviceProvider): void
     {
         Restify::repositoriesFrom(
             directory: $directory,

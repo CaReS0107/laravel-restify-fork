@@ -26,6 +26,7 @@ class AuthorizableModelsTest extends IntegrationTestCase
         parent::setUp();
 
         config()->set('restify.cache.policies.enabled', true);
+        config()->set('cache.default', 'file');
 
         $_SERVER['restify.post.allowRestify'] = true;
 
