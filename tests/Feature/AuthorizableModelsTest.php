@@ -146,7 +146,7 @@ class AuthorizableModelsTest extends IntegrationTestCase
         $timeCached = Gate::getPolicyFor(Post::class)
             ->cache();
 
-        $this->assertTrue($timeCached instanceof CarbonInterface);
+        $this->assertInstanceOf(CarbonInterface::class, $timeCached);
 
         $post = PostFactory::one();
 
