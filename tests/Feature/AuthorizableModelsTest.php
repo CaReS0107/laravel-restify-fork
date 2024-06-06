@@ -2,7 +2,6 @@
 
 namespace Binaryk\LaravelRestify\Tests\Feature;
 
-use Binaryk\LaravelRestify\Cache\Cacheable;
 use Binaryk\LaravelRestify\Cache\PolicyCache;
 use Binaryk\LaravelRestify\Tests\Database\Factories\PostFactory;
 use Binaryk\LaravelRestify\Tests\Fixtures\Post\Post;
@@ -15,7 +14,6 @@ use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
-use Symfony\Component\ErrorHandler\ErrorHandler;
 
 class AuthorizableModelsTest extends IntegrationTestCase
 {
